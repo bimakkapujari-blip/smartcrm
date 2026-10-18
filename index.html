@@ -4,512 +4,324 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="SmartCRM - Customer and order management dashboard">
   <title>SmartCRM | Customer Management</title>
   <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
-  <header class="topbar">
-    <div>
-      <h1>SmartCRM</h1>
-      <p>Customer relationships, made simpler.</p>
-    </div>
-    <span class="demo-tag">DEMO MODE</span>
-  </header>
+  <div class="app-container">
 
-  <main class="container">
-    <section class="welcome">
-      <div>
-        <p class="eyebrow">CUSTOMER RELATIONSHIP MANAGEMENT</p>
-        <h2>Your business at a glance</h2>
-        <p>Manage customers, track orders and prepare follow-ups.</p>
-      </div>
-    </section>
-
-    <section class="stats">
-      <article class="stat">
-        <span>Total customers</span>
-        <strong id="customerCount">0</strong>
-      </article>
-      <article class="stat">
-        <span>Total orders</span>
-        <strong id="orderCount">0</strong>
-      </article>
-      <article class="stat">
-        <span>Pending orders</span>
-        <strong id="pendingCount">0</strong>
-      </article>
-      <article class="stat">
-        <span>Total sales (demo)</span>
-        <strong id="salesTotal">₹0</strong>
-      </article>
-    </section>
-
-    <section class="panel">
-      <div class="section-heading">
+    <!-- Header -->
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-icon">S</div>
         <div>
-          <h2>Customer directory</h2>
-          <p>Search customers or add a new record.</p>
+          <h1>SmartCRM</h1>
+          <p>Customer Relationship Management</p>
         </div>
       </div>
 
-      <div class="toolbar">
-        <input id="searchInput" type="search"
-          placeholder="Search name, email or phone..."
-          aria-label="Search customers">
-        <button id="showFormBtn">+ Add customer</button>
+      <div class="header-actions">
+        <span class="status-indicator">● Demo Mode</span>
+        <button type="button" id="refreshBtn" class="btn btn-secondary">
+          Refresh
+        </button>
       </div>
+    </header>
 
-      <form id="customerForm" class="customer-form hidden">
-        <h3>New customer</h3>
-        <div class="form-grid">
-          <label>Full name
-            <input id="nameInput" required maxlength="80"
-              placeholder="e.g. Ananya Sharma">
-          </label>
-          <label>Email
-            <input id="emailInput" type="email" required maxlength="120"
-              placeholder="name@example.com">
-          </label>
-          <label>Phone
-            <input id="phoneInput" required maxlength="20"
-              placeholder="Phone number">
-          </label>
-          <label>Customer notes
-            <input id="notesInput" maxlength="240"
-              placeholder="Interests or previous conversation">
-          </label>
-        </div>
-        <div class="actions">
-          <button type="submit">Save customer</button>
-          <button type="button" id="cancelFormBtn" class="secondary">
-            Cancel
-          </button>
-        </div>
-      </form>
-
-      <p id="message" class="message" role="status"></p>
-      <div id="customerList" class="customer-list"></div>
-    </section>
-
-    <section class="panel">
-      <div class="section-heading">
+    <!-- Welcome Section -->
+    <main>
+      <section class="welcome-section">
         <div>
-          <h2>Order tracking</h2>
-          <p>Example ecommerce orders for demonstration.</p>
+          <h2>Customer Dashboard</h2>
+          <p>Manage your customers, orders and follow-ups in one place.</p>
         </div>
-        <select id="orderFilter" aria-label="Filter orders">
-          <option value="All">All statuses</option>
-          <option value="Processing">Processing</option>
-          <option value="Shipped">Shipped</option>
-          <option value="Delivered">Delivered</option>
-        </select>
-      </div>
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Order</th>
-              <th>Customer</th>
-              <th>Amount</th>
-              <th>Status</th>
-              <th>Update status</th>
-            </tr>
-          </thead>
-          <tbody id="orderList"></tbody>
-        </table>
-      </div>
-    </section>
 
-    <section class="panel assistant">
-      <p class="eyebrow">CUSTOMER ENGAGEMENT</p>
-      <h2>Smart follow-up assistant</h2>
-      <p>Choose a customer to generate a summary and suggested message.</p>
-      <div class="toolbar">
-        <select id="assistantCustomer" aria-label="Choose a customer"></select>
-        <button id="generateBtn">Generate suggestions</button>
-      </div>
-      <div id="assistantOutput" class="assistant-output">
-        Your customer summary will appear here.
-      </div>
-      <button id="copyBtn" class="secondary hidden">Copy message</button>
-      <p class="fine-print">
-        Demo assistant: suggestions are generated using local rules,
-        not a live AI model. Review messages before sending.
-      </p>
-    </section>
+        <button type="button" id="addCustomerBtn" class="btn btn-primary">
+          + Add Customer
+        </button>
+      </section>
 
-    <footer>
-      <p>SmartCRM • Student integration challenge prototype</p>
-      <p>Sample data only. No live WooCommerce connection is configured.</p>
+      <!-- Statistics -->
+      <section class="stats-grid">
+        <article class="stat-card">
+          <div class="stat-icon">👥</div>
+          <p>Total Customers</p>
+          <h2 id="totalCustomers">0</h2>
+          <span>Customers in your directory</span>
+        </article>
+
+        <article class="stat-card">
+          <div class="stat-icon">📦</div>
+          <p>Total Orders</p>
+          <h2 id="totalOrders">0</h2>
+          <span>Orders being tracked</span>
+        </article>
+
+        <article class="stat-card">
+          <div class="stat-icon">⏳</div>
+          <p>Pending Orders</p>
+          <h2 id="pendingOrders">0</h2>
+          <span>Orders awaiting completion</span>
+        </article>
+
+        <article class="stat-card">
+          <div class="stat-icon">📅</div>
+          <p>Follow-ups</p>
+          <h2 id="totalFollowups">0</h2>
+          <span>Follow-ups to review</span>
+        </article>
+      </section>
+
+      <!-- Customer Directory -->
+      <section class="dashboard-section">
+        <div class="section-heading">
+          <div>
+            <h2>Customer Directory</h2>
+            <p>Search and manage your customer information.</p>
+          </div>
+        </div>
+
+        <div class="toolbar">
+          <input
+            type="search"
+            id="customerSearch"
+            placeholder="Search by name, email or phone..."
+            aria-label="Search customers"
+          >
+
+          <select id="customerFilter" aria-label="Filter customers">
+            <option value="all">All Customers</option>
+            <option value="active">Active</option>
+            <option value="inactive">Inactive</option>
+          </select>
+        </div>
+
+        <!-- Add Customer Form -->
+        <form id="customerForm" class="customer-form" hidden>
+          <h3 id="customerFormTitle">Add New Customer</h3>
+
+          <input type="hidden" id="customerId">
+
+          <div class="form-grid">
+            <div class="form-group">
+              <label for="customerName">Full Name</label>
+              <input
+                type="text"
+                id="customerName"
+                placeholder="Enter customer name"
+                required
+              >
+            </div>
+
+            <div class="form-group">
+              <label for="customerEmail">Email Address</label>
+              <input
+                type="email"
+                id="customerEmail"
+                placeholder="Enter email address"
+                required
+              >
+            </div>
+
+            <div class="form-group">
+              <label for="customerPhone">Phone Number</label>
+              <input
+                type="tel"
+                id="customerPhone"
+                placeholder="Enter phone number"
+                required
+              >
+            </div>
+
+            <div class="form-group">
+              <label for="customerStatus">Status</label>
+              <select id="customerStatus">
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </select>
+            </div>
+
+            <div class="form-group form-full">
+              <label for="customerNotes">Notes</label>
+              <textarea
+                id="customerNotes"
+                placeholder="Add customer notes..."
+                rows="3"
+              ></textarea>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+              Save Customer
+            </button>
+            <button
+              type="button"
+              id="cancelCustomerBtn"
+              class="btn btn-secondary"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Customer</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="customerTableBody">
+              <tr>
+                <td colspan="5">Loading customers...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p id="customerMessage" class="message" role="status"></p>
+      </section>
+
+      <!-- Orders -->
+      <section class="dashboard-section">
+        <div class="section-heading">
+          <div>
+            <h2>Order Tracking</h2>
+            <p>Review customer orders and their current status.</p>
+          </div>
+        </div>
+
+        <div class="toolbar">
+          <input
+            type="search"
+            id="orderSearch"
+            placeholder="Search orders or customers..."
+            aria-label="Search orders"
+          >
+
+          <select id="orderFilter" aria-label="Filter orders">
+            <option value="all">All Orders</option>
+            <option value="pending">Pending</option>
+            <option value="processing">Processing</option>
+            <option value="completed">Completed</option>
+            <option value="cancelled">Cancelled</option>
+          </select>
+        </div>
+
+        <div class="table-wrapper">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>Order ID</th>
+                <th>Customer</th>
+                <th>Order Date</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="orderTableBody">
+              <tr>
+                <td colspan="6">Loading orders...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <p id="orderMessage" class="message" role="status"></p>
+      </section>
+
+      <!-- Follow-up and Assistant -->
+      <section class="bottom-grid">
+        <article class="dashboard-section">
+          <div class="section-heading">
+            <div>
+              <h2>Follow-up Reminders</h2>
+              <p>Keep track of customers you need to contact.</p>
+            </div>
+          </div>
+
+          <form id="followupForm" class="followup-form">
+            <div class="form-group">
+              <label for="followupCustomer">Customer Name</label>
+              <input
+                type="text"
+                id="followupCustomer"
+                placeholder="Enter customer name"
+                required
+              >
+            </div>
+
+            <div class="form-group">
+              <label for="followupDate">Follow-up Date</label>
+              <input type="date" id="followupDate" required>
+            </div>
+
+            <div class="form-group">
+              <label for="followupNote">Purpose</label>
+              <input
+                type="text"
+                id="followupNote"
+                placeholder="Call about an order..."
+                required
+              >
+            </div>
+
+            <button type="submit" class="btn btn-primary">
+              Add Reminder
+            </button>
+          </form>
+
+          <ul id="followupList" class="followup-list">
+            <li>No follow-ups added yet.</li>
+          </ul>
+        </article>
+
+        <article class="dashboard-section assistant-card">
+          <div class="section-heading">
+            <div>
+              <h2>Smart Assistant</h2>
+              <p>Quick help for common CRM tasks.</p>
+            </div>
+            <span class="assistant-icon">✦</span>
+          </div>
+
+          <div class="assistant-content">
+            <p>Welcome to SmartCRM!</p>
+            <p>
+              Use the customer directory to add or update customers,
+              track orders, and schedule follow-ups.
+            </p>
+
+            <div class="assistant-tips">
+              <h3>Quick Tips</h3>
+              <ul>
+                <li>Search customers by name, email or phone.</li>
+                <li>Update order statuses as work progresses.</li>
+                <li>Add reminders so important follow-ups aren't missed.</li>
+              </ul>
+            </div>
+          </div>
+        </article>
+      </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <p>© 2026 SmartCRM. Customer management made simple.</p>
+      <p>Demo version · Data stored in this browser where supported</p>
     </footer>
-  </main>
 
+  </div>
+
+  <!-- Keep JavaScript linked at the end of the body -->
   <script src="script.js"></script>
 </body>
 </html>
-
-/* ======================================
-   SmartCRM Dashboard Layout Enhancement
-   ====================================== */
-
-.container {
-  width: min(1440px, 100%);
-  margin: 0 auto;
-  padding: 28px 32px;
-}
-
-.topbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 18px;
-  padding: 20px 32px;
-  background: #ffffff;
-  border-bottom: 1px solid #f1dce6;
-}
-
-.topbar h1 {
-  margin: 0;
-  color: #bd376b;
-  font-size: 28px;
-  letter-spacing: -0.8px;
-}
-
-.topbar p {
-  margin: 3px 0 0;
-  font-size: 13px;
-}
-
-.demo-tag {
-  display: inline-flex;
-  align-items: center;
-  padding: 7px 13px;
-  border-radius: 30px;
-  background: #fce8f0;
-  color: #bd376b;
-  font-size: 11px;
-  font-weight: 750;
-  letter-spacing: 0.6px;
-  white-space: nowrap;
-}
-
-.welcome {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 24px;
-  padding: 30px;
-  border: 1px solid #f1dce8;
-  border-radius: 18px;
-  background: linear-gradient(120deg, #fff0f6, #f8f1ff 75%, #f0fbf6);
-}
-
-.welcome h2 {
-  margin: 8px 0;
-  font-size: clamp(25px, 3vw, 34px);
-  letter-spacing: -0.8px;
-}
-
-.welcome p {
-  margin-bottom: 0;
-}
-
-.eyebrow {
-  color: #bd376b;
-  font-size: 11px;
-  font-weight: 750;
-  letter-spacing: 1.2px;
-}
-
-.stats {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 18px;
-  margin-bottom: 24px;
-}
-
-.stat {
-  min-width: 0;
-  padding: 23px;
-  border: 1px solid #f1e3ea;
-  border-radius: 15px;
-  background: #ffffff;
-  box-shadow: 0 5px 22px rgba(171, 91, 124, 0.06);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.stat:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 10px 25px rgba(171, 91, 124, 0.10);
-}
-
-.stat span {
-  display: block;
-  color: #748097;
-  font-size: 13px;
-  font-weight: 550;
-}
-
-.stat strong {
-  display: block;
-  margin-top: 10px;
-  color: #bd376b;
-  font-size: clamp(25px, 3vw, 32px);
-  line-height: 1.2;
-  overflow-wrap: anywhere;
-}
-
-.panel {
-  margin-bottom: 24px;
-  padding: 24px;
-  border: 1px solid #f1e3ea;
-  border-radius: 16px;
-  background: #ffffff;
-  box-shadow: 0 5px 22px rgba(171, 91, 124, 0.05);
-}
-
-.section-heading {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 18px;
-  margin-bottom: 20px;
-}
-
-.section-heading h2,
-.panel > h2 {
-  margin: 0 0 5px;
-}
-
-.section-heading p {
-  margin: 0;
-  font-size: 13px;
-}
-
-.section-heading select {
-  width: auto;
-  min-width: 145px;
-}
-
-.toolbar {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin: 18px 0;
-}
-
-.toolbar input,
-.toolbar select {
-  flex: 1;
-  min-width: 0;
-}
-
-.toolbar button {
-  flex-shrink: 0;
-}
-
-.customer-form {
-  margin: 20px 0;
-  padding: 22px;
-  border: 1px solid #f0dce8;
-  border-radius: 13px;
-  background: #fff8fb;
-}
-
-.customer-form h3 {
-  margin-top: 0;
-}
-
-.form-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
-}
-
-.form-grid label {
-  min-width: 0;
-}
-
-.form-grid input {
-  margin-top: 5px;
-}
-
-.actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-top: 16px;
-}
-
-.hidden {
-  display: none !important;
-}
-
-.message {
-  margin: 10px 0;
-}
-
-.table-wrap {
-  width: 100%;
-  overflow-x: auto;
-  border: 1px solid #f1e3ea;
-  border-radius: 12px;
-}
-
-.table-wrap table {
-  min-width: 620px;
-}
-
-.table-wrap thead {
-  background: #fff1f6;
-}
-
-.table-wrap th {
-  padding: 15px;
-  color: #76516a;
-  font-size: 12px;
-}
-
-.table-wrap td {
-  padding: 15px;
-}
-
-.table-wrap tbody tr {
-  transition: background 0.15s ease;
-}
-
-.table-wrap tbody tr:hover {
-  background: #fff8fb;
-}
-
-.assistant {
-  background: linear-gradient(135deg, #ffffff 20%, #fff2f7, #f8f3ff);
-  border-color: #eed9e7;
-}
-
-.assistant .toolbar select {
-  background: #ffffff;
-}
-
-.assistant-output {
-  margin: 18px 0;
-  padding: 18px;
-  border: 1px solid #efdce8;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.88);
-  overflow-wrap: anywhere;
-}
-
-.fine-print {
-  margin-top: 16px;
-  font-size: 12px;
-}
-
-footer {
-  padding: 12px 0 4px;
-  text-align: center;
-}
-
-footer p {
-  margin: 5px 0;
-  font-size: 12px;
-}
-
-button.secondary,
-.secondary {
-  background: #ffffff;
-  color: #bd376b;
-  border-color: #edc6d6;
-}
-
-button.secondary:hover,
-.secondary:hover {
-  background: #fff0f6;
-  color: #bd376b;
-}
-
-/* Tablet layout */
-@media (max-width: 900px) {
-  .container {
-    padding: 20px;
-  }
-
-  .stats {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 14px;
-  }
-
-  .welcome {
-    padding: 24px;
-  }
-
-  .panel {
-    padding: 20px;
-  }
-}
-
-/* Mobile layout */
-@media (max-width: 560px) {
-  .topbar {
-    padding: 16px;
-  }
-
-  .topbar h1 {
-    font-size: 24px;
-  }
-
-  .container {
-    padding: 14px;
-  }
-
-  .welcome {
-    padding: 20px;
-  }
-
-  .welcome h2 {
-    font-size: 25px;
-  }
-
-  .stats {
-    gap: 10px;
-  }
-
-  .stat {
-    padding: 15px;
-  }
-
-  .stat span {
-    font-size: 12px;
-  }
-
-  .stat strong {
-    font-size: 25px;
-  }
-
-  .panel {
-    padding: 16px;
-  }
-
-  .section-heading {
-    align-items: flex-start;
-    flex-direction: column;
-  }
-
-  .section-heading select {
-    width: 100%;
-  }
-
-  .toolbar {
-    align-items: stretch;
-    flex-direction: column;
-  }
-
-  .toolbar button {
-    width: 100%;
-  }
-
-  .form-grid {
-    grid-template-columns: 1fr;
-  }
-}
-
