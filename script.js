@@ -3,29 +3,18 @@
 
 const $ = (id) => document.getElementById(id);
 
-const API_BASE = "https://smartcrm-silk.vercel.app";
-
 const initialCustomers = [
   {
-    id: 1,
-    name: "Ananya Sharma",
-    email: "ananya@example.com",
-    phone: "9876543210",
-    notes: "Interested in new arrivals"
+    id: 1, name: "Ananya Sharma", email: "ananya@example.com",
+    phone: "9876543210", notes: "Interested in new arrivals"
   },
   {
-    id: 2,
-    name: "Rahul Patil",
-    email: "rahul@example.com",
-    phone: "9876501234",
-    notes: "Asked about delivery time"
+    id: 2, name: "Rahul Patil", email: "rahul@example.com",
+    phone: "9876501234", notes: "Asked about delivery time"
   },
   {
-    id: 3,
-    name: "Priya Naik",
-    email: "priya@example.com",
-    phone: "9988776655",
-    notes: "Repeat customer"
+    id: 3, name: "Priya Naik", email: "priya@example.com",
+    phone: "9988776655", notes: "Repeat customer"
   }
 ];
 
@@ -60,66 +49,55 @@ function saveData() {
 }
 
 function escapeHTML(value) {
-  return String(value ?? "").replace(/[&<>"']/g, char => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#39;"
+  return String(value).replace(/[&<>"']/g, char => ({
+    "&": "&amp;", "<": "&lt;", ">": "&gt;",
+    '"': "&quot;", "'": "&#39;"
   })[char]);
 }
 
 function money(value) {
   return new Intl.NumberFormat("en-IN", {
-    style: "currency",
-    currency: "INR",
+    style: "currency", currency: "INR",
     maximumFractionDigits: 0
-  }).format(Number(value) || 0);
+  }).format(value);
 }
 
 function showMessage(text, error = false) {
-  const message = $("message");
-  if (!message) return;
-
-  message.textContent = text;
-  message.style.color = error ? "#b91c1c" : "#047857";
+  $("message").textContent = text;
+  $("message").style.color = error ? "#b91c1c" : "#047857";
 }
 
 function customerName(id) {
-  const customer = customers.find(c => Number(c.id) === Number(id));
+  const customer = customers.find(c => c.id === id);
   return customer ? customer.name : "Unknown customer";
 }
 
 function renderStats() {
   $("customerCount").textContent = customers.length;
   $("orderCount").textContent = orders.length;
-
-  $("pendingCount").textContent = orders.filter(
-    o => o.status !== "Delivered"
-  ).length;
-
-  $("salesTotal").textContent = money(
-    orders.reduce((sum, order) => sum + Number(order.amount || 0), 0)
-  );
+  $("pendingCount").textContent =
+    orders.filter(o => o.status !== "Delivered").length;
+  $("salesTotal").textContent =
+    money(orders.reduce((sum, o) => sum + Number(o.amount), 0));
 }
 
 function renderCustomers() {
   const query = $("searchInput").value.trim().toLowerCase();
 
-  const filtered = customers.filter(customer =>
-    [customer.name, customer.email, customer.phone, customer.notes]
-      .some(value => String(value || "").toLowerCase().includes(query))
+  const filtered = customers.filter(c =>
+    [c.name, c.email, c.phone, c.notes]
+      .some(value => String(value).toLowerCase().includes(query))
   );
 
   $("customerList").innerHTML = filtered.length
-    ? filtered.map(customer => `
+    ? filtered.map(c => `
       <article class="customer-card">
         <div>
-          <h3>${escapeHTML(customer.name)}</h3>
-          <p>${escapeHTML(customer.email)} · ${escapeHTML(customer.phone)}</p>
-          <p>Notes: ${escapeHTML(customer.notes || "No notes")}</p>
+          <h3>${escapeHTML(c.name)}</h3>
+          <p>${escapeHTML(c.email)} · ${escapeHTML(c.phone)}</p>
+          <p>Notes: ${escapeHTML(c.notes || "No notes")}</p>
         </div>
-        <button class="summary-btn" data-id="${Number(customer.id)}">
+        <button class="summary-btn" data-id="${c.id}">
           View summary
         </button>
       </article>
@@ -127,38 +105,32 @@ function renderCustomers() {
     : '<p class="empty">No matching customers found.</p>';
 
   $("assistantCustomer").innerHTML = customers.length
-    ? customers.map(customer => `
-        <option value="${Number(customer.id)}">
-          ${escapeHTML(customer.name)}
-        </option>
+    ? customers.map(c => `
+        <option value="${c.id}">${escapeHTML(c.name)}</option>
       `).join("")
     : '<option value="">No customers available</option>';
 }
 
 function renderOrders() {
   const filter = $("orderFilter").value;
-
-  const filtered = orders.filter(order =>
-    filter === "All" || order.status === filter
+  const filtered = orders.filter(o =>
+    filter === "All" || o.status === filter
   );
 
   $("orderList").innerHTML = filtered.length
-    ? filtered.map(order => `
+    ? filtered.map(o => `
       <tr>
-        <td>#${Number(order.id)}</td>
-        <td>${escapeHTML(customerName(order.customerId))}</td>
-        <td>${money(order.amount)}</td>
+        <td>#${o.id}</td>
+        <td>${escapeHTML(customerName(o.customerId))}</td>
+        <td>${money(o.amount)}</td>
+        <td><span class="status ${o.status}">
+          ${o.status}
+        </span></td>
         <td>
-          <span class="status ${escapeHTML(order.status)}">
-            ${escapeHTML(order.status)}
-          </span>
-        </td>
-        <td>
-          <select data-order-id="${Number(order.id)}"
-                  aria-label="Update order ${Number(order.id)}">
+          <select data-order-id="${o.id}" aria-label="Update order ${o.id}">
             ${["Processing", "Shipped", "Delivered"].map(status => `
               <option value="${status}"
-                ${order.status === status ? "selected" : ""}>
+                ${o.status === status ? "selected" : ""}>
                 ${status}
               </option>
             `).join("")}
@@ -176,27 +148,18 @@ function renderAll() {
 }
 
 function customerSummary(id) {
-  const customer = customers.find(c => Number(c.id) === Number(id));
+  const customer = customers.find(c => c.id === Number(id));
   if (!customer) return null;
 
-  const customerOrders = orders.filter(
-    order => Number(order.customerId) === Number(customer.id)
-  );
-
-  const total = customerOrders.reduce(
-    (sum, order) => sum + Number(order.amount || 0), 0
-  );
-
-  const pending = customerOrders.filter(
-    order => order.status !== "Delivered"
-  );
+  const customerOrders = orders.filter(o => o.customerId === customer.id);
+  const total = customerOrders.reduce((sum, o) => sum + o.amount, 0);
+  const pending = customerOrders.filter(o => o.status !== "Delivered");
 
   return { customer, customerOrders, total, pending };
 }
 
 function generateSuggestion(id) {
   const data = customerSummary(id);
-
   if (!data) {
     $("assistantOutput").textContent = "Please add or select a customer.";
     $("copyBtn").classList.add("hidden");
@@ -204,28 +167,22 @@ function generateSuggestion(id) {
   }
 
   const { customer, customerOrders, total, pending } = data;
-
-  const summary =
-    `${customer.name} has ${customerOrders.length} order(s), ` +
+  const summary = `${customer.name} has ${customerOrders.length} order(s), ` +
     `with total demo purchases of ${money(total)}. ` +
     `${pending.length} order(s) are not yet delivered. ` +
     `Customer notes: ${customer.notes || "No notes available"}.`;
 
   let message;
-
   if (pending.length > 0) {
-    message =
-      `Hi ${customer.name}, thank you for shopping with us! ` +
-      "We wanted to keep you updated on your order. " +
-      "Please contact us if you need any help.";
+    message = `Hi ${customer.name}, thank you for shopping with us! ` +
+      `We wanted to keep you updated on your order. ` +
+      `Please contact us if you need any help.`;
   } else if (customerOrders.length > 0) {
-    message =
-      `Hi ${customer.name}, thank you for being our valued customer! ` +
-      "We hope you enjoyed your purchase. Let us know if we can help you again.";
+    message = `Hi ${customer.name}, thank you for being our valued customer! ` +
+      `We hope you enjoyed your purchase. Let us know if we can help you again.`;
   } else {
-    message =
-      `Hi ${customer.name}, welcome! We'd love to help you find ` +
-      "the right products. Please contact us if you have any questions.";
+    message = `Hi ${customer.name}, welcome! We'd love to help you find ` +
+      `the right products. Please contact us if you have any questions.`;
   }
 
   $("assistantOutput").innerHTML = `
@@ -236,85 +193,6 @@ function generateSuggestion(id) {
   `;
 
   $("copyBtn").classList.remove("hidden");
-}
-
-// Connect to the deployed SmartCRM backend.
-async function loadFromAPI() {
-  try {
-    const [customerResponse, orderResponse] = await Promise.all([
-      fetch(`${API_BASE}/api/woocommerce/customers`),
-      fetch(`${API_BASE}/api/woocommerce/orders`)
-    ]);
-
-    if (!customerResponse.ok || !orderResponse.ok) {
-      throw new Error("The API returned an error.");
-    }
-
-    const customerData = await customerResponse.json();
-    const orderData = await orderResponse.json();
-
-    if (!Array.isArray(customerData.customers) ||
-        !Array.isArray(orderData.orders)) {
-      throw new Error("Unexpected API response.");
-    }
-
-    customers = customerData.customers.map(customer => {
-      const existing = initialCustomers.find(
-        item => Number(item.id) === Number(customer.id)
-      );
-
-      return {
-        id: Number(customer.id),
-        name: [
-          customer.first_name,
-          customer.last_name
-        ].filter(Boolean).join(" ") || "Customer",
-        email: customer.email || "",
-        phone: existing?.phone || "",
-        notes: existing?.notes || "Loaded from SmartCRM API"
-      };
-    });
-
-    orders = orderData.orders.map(order => {
-      const existing = initialOrders.find(
-        item => Number(item.id) === Number(order.id)
-      );
-
-      let status = String(order.status || "processing").toLowerCase();
-
-      if (status === "completed" || status === "delivered") {
-        status = "Delivered";
-      } else if (
-        status === "shipped" ||
-        status === "partially-shipped"
-      ) {
-        status = "Shipped";
-      } else {
-        status = "Processing";
-      }
-
-      return {
-        id: Number(order.id),
-        customerId: Number(
-          order.customer_id || existing?.customerId || 1
-        ),
-        amount: Number(order.total ?? existing?.amount ?? 0),
-        status
-      };
-    });
-
-    saveData();
-    renderAll();
-    showMessage(
-      `Connected to SmartCRM API in ${customerData.mode || "demo"} mode.`
-    );
-  } catch (error) {
-    console.error("SmartCRM API connection failed:", error);
-    showMessage(
-      "Could not load API data. Showing saved browser data instead.",
-      true
-    );
-  }
 }
 
 $("showFormBtn").addEventListener("click", () => {
@@ -332,16 +210,12 @@ $("customerForm").addEventListener("submit", event => {
   event.preventDefault();
 
   const email = $("emailInput").value.trim().toLowerCase();
-
   if (customers.some(c => c.email.toLowerCase() === email)) {
     showMessage("A customer with this email already exists.", true);
     return;
   }
 
-  const nextId = Math.max(
-    0,
-    ...customers.map(c => Number(c.id))
-  ) + 1;
+  const nextId = Math.max(0, ...customers.map(c => Number(c.id))) + 1;
 
   customers.push({
     id: nextId,
@@ -356,26 +230,24 @@ $("customerForm").addEventListener("submit", event => {
   $("customerForm").classList.add("hidden");
   renderAll();
   $("assistantCustomer").value = String(nextId);
-  showMessage("Customer added and saved in this browser.");
+  showMessage("Customer added successfully.");
 });
 
 $("searchInput").addEventListener("input", renderCustomers);
+
 $("orderFilter").addEventListener("change", renderOrders);
 
 $("orderList").addEventListener("change", event => {
   const select = event.target.closest("select[data-order-id]");
   if (!select) return;
 
-  const order = orders.find(
-    item => Number(item.id) === Number(select.dataset.orderId)
-  );
-
+  const order = orders.find(o => o.id === Number(select.dataset.orderId));
   if (!order) return;
 
   order.status = select.value;
   saveData();
   renderAll();
-  showMessage(`Order #${order.id} status updated in this browser.`);
+  showMessage(`Order #${order.id} status updated.`);
 });
 
 $("customerList").addEventListener("click", event => {
@@ -384,11 +256,7 @@ $("customerList").addEventListener("click", event => {
 
   $("assistantCustomer").value = button.dataset.id;
   generateSuggestion(button.dataset.id);
-
-  $("assistantOutput").scrollIntoView({
-    behavior: "smooth",
-    block: "center"
-  });
+  $("assistantOutput").scrollIntoView({ behavior: "smooth", block: "center" });
 });
 
 $("generateBtn").addEventListener("click", () => {
@@ -403,23 +271,17 @@ $("copyBtn").addEventListener("click", async () => {
     await navigator.clipboard.writeText(message);
     showMessage("Follow-up message copied.");
   } catch {
-    showMessage(
-      "Copy unavailable here. Select and copy the message manually.",
-      true
-    );
+    showMessage("Copy unavailable here. Select and copy the message manually.", true);
   }
 });
 
+// Small built-in sanity checks for core business logic.
 function runSelfTests() {
   const passed = [
-    Array.isArray(customers),
-    Array.isArray(orders),
-    orders.every(order =>
-      ["Processing", "Shipped", "Delivered"].includes(order.status)
-    ),
-    customers.every(customer =>
-      customer.id !== undefined && customer.email
-    )
+    customers.length >= 0,
+    orders.every(o => ["Processing", "Shipped", "Delivered"].includes(o.status)),
+    customers.every(c => c.id !== undefined && c.email),
+    orders.every(o => customers.some(c => c.id === o.customerId))
   ].filter(Boolean).length;
 
   console.info(`SmartCRM startup checks: ${passed}/4 passed`);
@@ -427,4 +289,3 @@ function runSelfTests() {
 
 renderAll();
 runSelfTests();
-loadFromAPI();
