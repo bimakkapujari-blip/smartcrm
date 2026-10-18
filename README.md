@@ -1,38 +1,68 @@
-SmartCRM — CRM System Integration
+# SmartCRM – Customer Relationship Management System
 
-1. Project Overview
-SmartCRM is a web-based CRM prototype designed to manage customer information, track ecommerce orders, and suggest customer follow-up messages.
+## 1. Project Overview
 
-2. Problem Statement
-Small businesses need an easy way to organize customer records, monitor orders, and maintain customer communication.
+SmartCRM is a web-based Customer Relationship Management (CRM) application developed to help businesses manage customer details, monitor orders, and prepare customer follow-up messages in one place.
 
-3. Features
-- Customer management and search
-- Sample ecommerce order tracking
-- Order status filtering and updates
-- Customer summaries
-- Rule-based follow-up suggestions
-- Browser-based data persistence, where supported
+The project includes a web frontend and a REST API backend. It currently uses demo customer and order data to demonstrate the main CRM features.
 
-4. Technology Stack
-- HTML5
-- CSS3
-- JavaScript
-- GitHub Pages
+## 2. Key Features
 
-5. How to Run
-Open the deployed GitHub Pages website in a browser. Use the sample data to test customer management, order tracking, and follow-up suggestions.
+- **Customer Management:** View customer details and add new customers.
+- **Customer Search:** Find customers using the available search feature.
+- **Order Management:** View orders and update order statuses.
+- **Dashboard:** Display customer, order, pending-order, and sales information.
+- **Customer Follow-up Assistance:** Generate rule-based suggestions for customer communication.
+- **REST API:** Retrieve customer and order data through backend endpoints.
+- **Web Deployment:** Access the frontend and backend through their deployed URLs.
 
-6. Testing
-The prototype has been manually tested for its main customer, order, and assistant workflows. Automated test coverage should be documented separately when implemented.
+## 3. Technologies Used
 
-7. Current Limitations
-The current version uses demo data. It is not yet connected to a live WooCommerce store. The follow-up assistant uses predefined rules rather than a live AI model.
+- **Frontend:** HTML, CSS, JavaScript
+- **Backend:** Node.js, Express.js
+- **API:** REST API
+- **Frontend Hosting:** GitHub Pages
+- **Backend Hosting:** Vercel
+- **Browser Storage:** localStorage for frontend changes
 
-8. Future Scope
-- Integrate WooCommerce through its REST API
-- Add a secure backend and database
-- Synchronize customer and order information
-- Add AI-powered customer summaries
-- Add automated unit and end-to-end tests
-- Implement error handling and secure authentication
+## 4. Live Project Links
+
+- **Frontend:** https://bimakkapujari-blip.github.io/smartcrm/
+- **Backend:** https://smartcrm-silk.vercel.app/
+
+## 5. API Endpoints
+
+| Method | Endpoint | Purpose |
+|---|---|---|
+| GET | `/` | Check backend availability |
+| GET | `/api/woocommerce/status` | Check WooCommerce integration status |
+| GET | `/api/woocommerce/customers` | Retrieve customer data |
+| GET | `/api/woocommerce/orders` | Retrieve order data |
+
+## 6. How the Project Works
+
+1. The user opens the SmartCRM web application.
+2. The dashboard displays customer and order information.
+3. The frontend requests customer and order data from the backend API.
+4. Users can explore customers, search records, and manage order statuses.
+5. The application provides rule-based follow-up suggestions to support customer communication.
+
+## 7. Current Implementation and Limitations
+
+- The application currently uses demo data because a live WooCommerce store has not been connected.
+- Customer additions and order-status changes made in the frontend are stored in the browser and are not synchronized with WooCommerce.
+- Follow-up suggestions are rule-based and do not use a trained AI model.
+- Automated unit and end-to-end tests still need to be implemented and verified.
+
+## 8. Future Enhancements
+
+- Connect the application to a real WooCommerce store.
+- Add a database for persistent customer and order records.
+- Synchronize updates with the backend.
+- Add user authentication and role-based access.
+- Improve customer follow-up recommendations.
+- Implement automated unit and end-to-end testing.
+
+## 9. Conclusion
+
+SmartCRM demonstrates the development and deployment of a web-based CRM prototype using frontend technologies, a Node.js and Express backend, and REST API communication. The project provides a foundation for further development into a more complete customer and order management system.
