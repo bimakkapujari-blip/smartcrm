@@ -4,324 +4,146 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="SmartCRM - Customer and order management dashboard">
   <title>SmartCRM | Customer Management</title>
   <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-  <div class="app-container">
+  <header class="topbar">
+    <div>
+      <h1>SmartCRM</h1>
+      <p>Customer relationships, made simpler.</p>
+    </div>
+    <span class="demo-tag">DEMO MODE</span>
+  </header>
 
-    <!-- Header -->
-    <header class="topbar">
-      <div class="brand">
-        <div class="brand-icon">S</div>
+  <main class="container">
+    <section class="welcome">
+      <div>
+        <p class="eyebrow">CUSTOMER RELATIONSHIP MANAGEMENT</p>
+        <h2>Your business at a glance</h2>
+        <p>Manage customers, track orders and prepare follow-ups.</p>
+      </div>
+    </section>
+
+    <section class="stats">
+      <article class="stat">
+        <span>Total customers</span>
+        <strong id="customerCount">0</strong>
+      </article>
+      <article class="stat">
+        <span>Total orders</span>
+        <strong id="orderCount">0</strong>
+      </article>
+      <article class="stat">
+        <span>Pending orders</span>
+        <strong id="pendingCount">0</strong>
+      </article>
+      <article class="stat">
+        <span>Total sales (demo)</span>
+        <strong id="salesTotal">₹0</strong>
+      </article>
+    </section>
+
+    <section class="panel">
+      <div class="section-heading">
         <div>
-          <h1>SmartCRM</h1>
-          <p>Customer Relationship Management</p>
+          <h2>Customer directory</h2>
+          <p>Search customers or add a new record.</p>
         </div>
       </div>
 
-      <div class="header-actions">
-        <span class="status-indicator">● Demo Mode</span>
-        <button type="button" id="refreshBtn" class="btn btn-secondary">
-          Refresh
-        </button>
+      <div class="toolbar">
+        <input id="searchInput" type="search"
+          placeholder="Search name, email or phone..."
+          aria-label="Search customers">
+        <button id="showFormBtn">+ Add customer</button>
       </div>
-    </header>
 
-    <!-- Welcome Section -->
-    <main>
-      <section class="welcome-section">
+      <form id="customerForm" class="customer-form hidden">
+        <h3>New customer</h3>
+        <div class="form-grid">
+          <label>Full name
+            <input id="nameInput" required maxlength="80"
+              placeholder="e.g. Ananya Sharma">
+          </label>
+          <label>Email
+            <input id="emailInput" type="email" required maxlength="120"
+              placeholder="name@example.com">
+          </label>
+          <label>Phone
+            <input id="phoneInput" required maxlength="20"
+              placeholder="Phone number">
+          </label>
+          <label>Customer notes
+            <input id="notesInput" maxlength="240"
+              placeholder="Interests or previous conversation">
+          </label>
+        </div>
+        <div class="actions">
+          <button type="submit">Save customer</button>
+          <button type="button" id="cancelFormBtn" class="secondary">
+            Cancel
+          </button>
+        </div>
+      </form>
+
+      <p id="message" class="message" role="status"></p>
+      <div id="customerList" class="customer-list"></div>
+    </section>
+
+    <section class="panel">
+      <div class="section-heading">
         <div>
-          <h2>Customer Dashboard</h2>
-          <p>Manage your customers, orders and follow-ups in one place.</p>
+          <h2>Order tracking</h2>
+          <p>Example ecommerce orders for demonstration.</p>
         </div>
+        <select id="orderFilter" aria-label="Filter orders">
+          <option value="All">All statuses</option>
+          <option value="Processing">Processing</option>
+          <option value="Shipped">Shipped</option>
+          <option value="Delivered">Delivered</option>
+        </select>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Order</th>
+              <th>Customer</th>
+              <th>Amount</th>
+              <th>Status</th>
+              <th>Update status</th>
+            </tr>
+          </thead>
+          <tbody id="orderList"></tbody>
+        </table>
+      </div>
+    </section>
 
-        <button type="button" id="addCustomerBtn" class="btn btn-primary">
-          + Add Customer
-        </button>
-      </section>
+    <section class="panel assistant">
+      <p class="eyebrow">CUSTOMER ENGAGEMENT</p>
+      <h2>Smart follow-up assistant</h2>
+      <p>Choose a customer to generate a summary and suggested message.</p>
+      <div class="toolbar">
+        <select id="assistantCustomer" aria-label="Choose a customer"></select>
+        <button id="generateBtn">Generate suggestions</button>
+      </div>
+      <div id="assistantOutput" class="assistant-output">
+        Your customer summary will appear here.
+      </div>
+      <button id="copyBtn" class="secondary hidden">Copy message</button>
+      <p class="fine-print">
+        Demo assistant: suggestions are generated using local rules,
+        not a live AI model. Review messages before sending.
+      </p>
+    </section>
 
-      <!-- Statistics -->
-      <section class="stats-grid">
-        <article class="stat-card">
-          <div class="stat-icon">👥</div>
-          <p>Total Customers</p>
-          <h2 id="totalCustomers">0</h2>
-          <span>Customers in your directory</span>
-        </article>
-
-        <article class="stat-card">
-          <div class="stat-icon">📦</div>
-          <p>Total Orders</p>
-          <h2 id="totalOrders">0</h2>
-          <span>Orders being tracked</span>
-        </article>
-
-        <article class="stat-card">
-          <div class="stat-icon">⏳</div>
-          <p>Pending Orders</p>
-          <h2 id="pendingOrders">0</h2>
-          <span>Orders awaiting completion</span>
-        </article>
-
-        <article class="stat-card">
-          <div class="stat-icon">📅</div>
-          <p>Follow-ups</p>
-          <h2 id="totalFollowups">0</h2>
-          <span>Follow-ups to review</span>
-        </article>
-      </section>
-
-      <!-- Customer Directory -->
-      <section class="dashboard-section">
-        <div class="section-heading">
-          <div>
-            <h2>Customer Directory</h2>
-            <p>Search and manage your customer information.</p>
-          </div>
-        </div>
-
-        <div class="toolbar">
-          <input
-            type="search"
-            id="customerSearch"
-            placeholder="Search by name, email or phone..."
-            aria-label="Search customers"
-          >
-
-          <select id="customerFilter" aria-label="Filter customers">
-            <option value="all">All Customers</option>
-            <option value="active">Active</option>
-            <option value="inactive">Inactive</option>
-          </select>
-        </div>
-
-        <!-- Add Customer Form -->
-        <form id="customerForm" class="customer-form" hidden>
-          <h3 id="customerFormTitle">Add New Customer</h3>
-
-          <input type="hidden" id="customerId">
-
-          <div class="form-grid">
-            <div class="form-group">
-              <label for="customerName">Full Name</label>
-              <input
-                type="text"
-                id="customerName"
-                placeholder="Enter customer name"
-                required
-              >
-            </div>
-
-            <div class="form-group">
-              <label for="customerEmail">Email Address</label>
-              <input
-                type="email"
-                id="customerEmail"
-                placeholder="Enter email address"
-                required
-              >
-            </div>
-
-            <div class="form-group">
-              <label for="customerPhone">Phone Number</label>
-              <input
-                type="tel"
-                id="customerPhone"
-                placeholder="Enter phone number"
-                required
-              >
-            </div>
-
-            <div class="form-group">
-              <label for="customerStatus">Status</label>
-              <select id="customerStatus">
-                <option value="active">Active</option>
-                <option value="inactive">Inactive</option>
-              </select>
-            </div>
-
-            <div class="form-group form-full">
-              <label for="customerNotes">Notes</label>
-              <textarea
-                id="customerNotes"
-                placeholder="Add customer notes..."
-                rows="3"
-              ></textarea>
-            </div>
-          </div>
-
-          <div class="form-actions">
-            <button type="submit" class="btn btn-primary">
-              Save Customer
-            </button>
-            <button
-              type="button"
-              id="cancelCustomerBtn"
-              class="btn btn-secondary"
-            >
-              Cancel
-            </button>
-          </div>
-        </form>
-
-        <div class="table-wrapper">
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>Customer</th>
-                <th>Email</th>
-                <th>Phone</th>
-                <th>Status</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="customerTableBody">
-              <tr>
-                <td colspan="5">Loading customers...</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <p id="customerMessage" class="message" role="status"></p>
-      </section>
-
-      <!-- Orders -->
-      <section class="dashboard-section">
-        <div class="section-heading">
-          <div>
-            <h2>Order Tracking</h2>
-            <p>Review customer orders and their current status.</p>
-          </div>
-        </div>
-
-        <div class="toolbar">
-          <input
-            type="search"
-            id="orderSearch"
-            placeholder="Search orders or customers..."
-            aria-label="Search orders"
-          >
-
-          <select id="orderFilter" aria-label="Filter orders">
-            <option value="all">All Orders</option>
-            <option value="pending">Pending</option>
-            <option value="processing">Processing</option>
-            <option value="completed">Completed</option>
-            <option value="cancelled">Cancelled</option>
-          </select>
-        </div>
-
-        <div class="table-wrapper">
-          <table class="data-table">
-            <thead>
-              <tr>
-                <th>Order ID</th>
-                <th>Customer</th>
-                <th>Order Date</th>
-                <th>Amount</th>
-                <th>Status</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody id="orderTableBody">
-              <tr>
-                <td colspan="6">Loading orders...</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <p id="orderMessage" class="message" role="status"></p>
-      </section>
-
-      <!-- Follow-up and Assistant -->
-      <section class="bottom-grid">
-        <article class="dashboard-section">
-          <div class="section-heading">
-            <div>
-              <h2>Follow-up Reminders</h2>
-              <p>Keep track of customers you need to contact.</p>
-            </div>
-          </div>
-
-          <form id="followupForm" class="followup-form">
-            <div class="form-group">
-              <label for="followupCustomer">Customer Name</label>
-              <input
-                type="text"
-                id="followupCustomer"
-                placeholder="Enter customer name"
-                required
-              >
-            </div>
-
-            <div class="form-group">
-              <label for="followupDate">Follow-up Date</label>
-              <input type="date" id="followupDate" required>
-            </div>
-
-            <div class="form-group">
-              <label for="followupNote">Purpose</label>
-              <input
-                type="text"
-                id="followupNote"
-                placeholder="Call about an order..."
-                required
-              >
-            </div>
-
-            <button type="submit" class="btn btn-primary">
-              Add Reminder
-            </button>
-          </form>
-
-          <ul id="followupList" class="followup-list">
-            <li>No follow-ups added yet.</li>
-          </ul>
-        </article>
-
-        <article class="dashboard-section assistant-card">
-          <div class="section-heading">
-            <div>
-              <h2>Smart Assistant</h2>
-              <p>Quick help for common CRM tasks.</p>
-            </div>
-            <span class="assistant-icon">✦</span>
-          </div>
-
-          <div class="assistant-content">
-            <p>Welcome to SmartCRM!</p>
-            <p>
-              Use the customer directory to add or update customers,
-              track orders, and schedule follow-ups.
-            </p>
-
-            <div class="assistant-tips">
-              <h3>Quick Tips</h3>
-              <ul>
-                <li>Search customers by name, email or phone.</li>
-                <li>Update order statuses as work progresses.</li>
-                <li>Add reminders so important follow-ups aren't missed.</li>
-              </ul>
-            </div>
-          </div>
-        </article>
-      </section>
-    </main>
-
-    <!-- Footer -->
-    <footer class="footer">
-      <p>© 2026 SmartCRM. Customer management made simple.</p>
-      <p>Demo version · Data stored in this browser where supported</p>
+    <footer>
+      <p>SmartCRM • Student integration challenge prototype</p>
+      <p>Sample data only. No live WooCommerce connection is configured.</p>
     </footer>
+  </main>
 
-  </div>
-
-  <!-- Keep JavaScript linked at the end of the body -->
   <script src="script.js"></script>
 </body>
 </html>
